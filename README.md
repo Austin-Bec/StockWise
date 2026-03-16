@@ -108,9 +108,6 @@ Duplicate SKU returns HTTP 409
 
 Running the Application
 
-Clone the repository:
-
-git clone https://github.com/YOUR_USERNAME/stockwise.git
 
 Navigate to the project directory:
 
