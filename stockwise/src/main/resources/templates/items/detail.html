@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Item Details</title>
+    <meta charset="UTF-8">
+</head>
+<body>
+
+<h1>Item Details</h1>
+
+<p>
+    <a th:href="@{/items}">Back to Items</a> |
+    <a th:href="@{/}">Home</a>
+</p>
+
+<table border="1">
+    <tr>
+        <th>ID</th>
+        <td th:text="${item.id}"></td>
+    </tr>
+    <tr>
+        <th>Name</th>
+        <td th:text="${item.name}"></td>
+    </tr>
+    <tr>
+        <th>SKU</th>
+        <td th:text="${item.sku}"></td>
+    </tr>
+    <tr>
+        <th>Quantity On Hand</th>
+        <td th:text="${item.quantityOnHand}"></td>
+    </tr>
+    <tr>
+        <th>Reorder Threshold</th>
+        <td th:text="${item.reorderThreshold}"></td>
+    </tr>
+    <tr>
+        <th>Unit Cost</th>
+        <td th:text="${item.unitCost}"></td>
+    </tr>
+    <tr>
+        <th>Active</th>
+        <td th:text="${item.active}"></td>
+    </tr>
+    <tr>
+        <th>Status</th>
+        <td th:style="${item.quantityOnHand <= item.reorderThreshold} ? 'color:red;font-weight:bold;' : 'color:green;font-weight:bold;'"
+            th:text="${item.quantityOnHand <= item.reorderThreshold ? 'LOW STOCK' : 'OK'}">
+        </td>
+    </tr>
+</table>
+
+<br>
+
+<p>
+    <a th:href="@{/items/{id}/edit(id=${item.id})}">Edit</a> |
+    <a th:href="@{/transactions/new/{id}(id=${item.id})}">Adjust Inventory</a> |
+    <a th:href="@{/transactions/history/{id}(id=${item.id})}">View History</a>
+</p>
+
+<form th:action="@{/items/{id}/delete(id=${item.id})}" method="post">
+    <button type="submit">Delete Item</button>
+</form>
+
+</body>
+</html>

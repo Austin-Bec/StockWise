@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Item Form</title>
+    <meta charset="UTF-8">
+</head>
+<body>
+
+<h1 th:text="${formMode == 'create'} ? 'Create Item' : 'Edit Item'"></h1>
+
+<p>
+    <a th:href="@{/items}">Back to Items</a> |
+    <a th:href="@{/}">Home</a>
+</p>
+
+<div th:if="${error}" style="color:red;">
+    <p th:text="${error}"></p>
+</div>
+
+<form th:action="${formMode == 'create'} ? @{/items} : @{/items/{id}(id=${itemId})}"
+      th:object="${itemForm}"
+      method="post">
+
+    <div>
+        <label for="name">Name:</label>
+        <input id="name" type="text" th:field="*{name}">
+        <span th:if="${#fields.hasErrors('name')}" th:errors="*{name}" style="color:red;"></span>
+    </div>
+
+    <br>
+
+    <div>
+        <label for="sku">SKU:</label>
+        <input id="sku" type="text" th:field="*{sku}">
+        <span th:if="${#fields.hasErrors('sku')}" th:errors="*{sku}" style="color:red;"></span>
+    </div>
+
+    <br>
+
+    <div>
+        <label for="quantityOnHand">Quantity On Hand:</label>
+        <input id="quantityOnHand" type="number" min="0" th:field="*{quantityOnHand}">
+        <span th:if="${#fields.hasErrors('quantityOnHand')}" th:errors="*{quantityOnHand}" style="color:red;"></span>
+    </div>
+
+    <br>
+
+    <div>
+        <label for="reorderThreshold">Reorder Threshold:</label>
+        <input id="reorderThreshold" type="number" min="0" th:field="*{reorderThreshold}">
+        <span th:if="${#fields.hasErrors('reorderThreshold')}" th:errors="*{reorderThreshold}" style="color:red;"></span>
+    </div>
+
+    <br>
+
+    <div>
+        <label for="unitCost">Unit Cost:</label>
+        <input id="unitCost" type="number" min="0" step="0.01" th:field="*{unitCost}">
+        <span th:if="${#fields.hasErrors('unitCost')}" th:errors="*{unitCost}" style="color:red;"></span>
+    </div>
+
+    <br>
+
+    <div th:if="${formMode == 'edit'}">
+        <label for="active">Active:</label>
+        <input id="active" type="checkbox" th:field="*{active}">
+    </div>
+
+    <br>
+
+    <button type="submit" th:text="${formMode == 'create'} ? 'Create Item' : 'Save Changes'"></button>
+</form>
+
+</body>
+</html>

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>StockWise Dashboard</title>
+    <meta charset="UTF-8">
+</head>
+<body>
+
+<h1>StockWise Dashboard</h1>
+
+<p>
+    <a th:href="@{/items}">View Items</a> |
+    <a th:href="@{/items/new}">Add New Item</a>
+</p>
+
+<hr>
+
+<h2>System Overview</h2>
+
+<ul>
+    <li>Total Items: <span th:text="${totalItems}"></span></li>
+    <li>Active Items: <span th:text="${activeItems}"></span></li>
+    <li>Low Stock Count: <span th:text="${lowStockCount}"></span></li>
+    <li>Total Inventory Value: $<span th:text="${totalInventoryValue}"></span></li>
+</ul>
+
+<hr>
+
+<h2>Low Stock Items</h2>
+
+<table border="1" th:if="${lowStockItems != null and !#lists.isEmpty(lowStockItems)}">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>SKU</th>
+        <th>Quantity</th>
+        <th>Threshold</th>
+        <th>Unit Cost</th>
+        <th>Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="item : ${lowStockItems}" style="background-color:#f8d7da;">
+        <td th:text="${item.id}"></td>
+        <td th:text="${item.name}"></td>
+        <td th:text="${item.sku}"></td>
+        <td th:text="${item.quantityOnHand}"></td>
+        <td th:text="${item.reorderThreshold}"></td>
+        <td th:text="${item.unitCost}"></td>
+        <td>
+            <a th:href="@{/items/{id}(id=${item.id})}">View</a>
+            <a th:href="@{/transactions/new/{id}(id=${item.id})}">Adjust Stock</a>
+            <a th:href="@{/transactions/history/{id}(id=${item.id})}">History</a>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+<p th:if="${lowStockItems == null or #lists.isEmpty(lowStockItems)}">
+    No low stock items.
+</p>
+
+</body>
+</html>

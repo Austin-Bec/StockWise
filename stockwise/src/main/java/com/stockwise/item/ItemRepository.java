@@ -1,22 +1,21 @@
 package com.stockwise.item;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
+import java.util.List;
 import java.util.Optional;
 
-/**
- * Repository interface for the Item entity.
- * Responsibility:
- * - Provide CRUD operations for items using Spring Data JPA.
- */
 public interface ItemRepository extends JpaRepository<Item, Long> {
 
-    /**
-     * Find an item by its unique SKU.
-     *
-     * @param sku SKU string to search for.
-     * @return Optional containing the item, if found.
-     */
     Optional<Item> findBySku(String sku);
+
     boolean existsBySku(String sku);
+
+    List<Item> findByQuantityOnHandLessThan(Integer threshold);
+
+    List<Item> findByActiveTrue();
+
+    @Query("SELECT i FROM Item i WHERE i.active = true AND i.quantityOnHand <= i.reorderThreshold")
+    List<Item> findLowStockItems();
 }

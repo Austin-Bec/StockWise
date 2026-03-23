@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Transaction History</title>
+    <meta charset="UTF-8">
+</head>
+<body>
+
+<h1>Transaction History</h1>
+
+<p>
+    <a th:href="@{/items/{id}(id=${item.id})}">Back to Item</a> |
+    <a th:href="@{/items}">Back to Items</a> |
+    <a th:href="@{/transactions/new/{id}(id=${item.id})}">Add Transaction</a>
+</p>
+
+<h3 th:text="'Item: ' + ${item.name}"></h3>
+<p th:text="'Current Quantity: ' + ${item.quantityOnHand}"></p>
+<p th:text="'Reorder Threshold: ' + ${item.reorderThreshold}"></p>
+
+<table border="1">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Type</th>
+        <th>Quantity Changed</th>
+        <th>Before</th>
+        <th>After</th>
+        <th>Note</th>
+        <th>Timestamp</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="txn : ${transactions}">
+        <td th:text="${txn.id}"></td>
+        <td th:text="${txn.transactionType}"></td>
+        <td th:text="${txn.quantityChanged}"></td>
+        <td th:text="${txn.quantityBefore}"></td>
+        <td th:text="${txn.quantityAfter}"></td>
+        <td th:text="${txn.note}"></td>
+        <td th:text="${txn.timestamp}"></td>
+    </tr>
+    </tbody>
+</table>
+
+</body>
+</html>

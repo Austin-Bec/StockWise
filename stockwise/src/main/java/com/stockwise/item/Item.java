@@ -7,7 +7,7 @@ import java.math.BigDecimal;
  * Entity: Item
  * Responsibility:
  * - Represents a stock keeping unit (SKU) in the StockWise system.
- * - Stores basic inventory master data such as name, SKU, quantity and cost.
+ * - Stores inventory master data such as name, SKU, quantity, cost, and reorder threshold.
  */
 @Entity
 @Table(name = "items")
@@ -30,6 +30,9 @@ public class Item {
     private BigDecimal unitCost = BigDecimal.ZERO;
 
     @Column(nullable = false)
+    private Integer reorderThreshold = 5;
+
+    @Column(nullable = false)
     private boolean active = true;
 
     /**
@@ -47,6 +50,7 @@ public class Item {
         this.sku = sku;
         this.quantityOnHand = quantityOnHand;
         this.unitCost = unitCost;
+        this.reorderThreshold = 5;
         this.active = true;
     }
 
@@ -86,6 +90,14 @@ public class Item {
 
     public void setUnitCost(BigDecimal unitCost) {
         this.unitCost = unitCost;
+    }
+
+    public Integer getReorderThreshold() {
+        return reorderThreshold;
+    }
+
+    public void setReorderThreshold(Integer reorderThreshold) {
+        this.reorderThreshold = reorderThreshold;
     }
 
     public boolean isActive() {

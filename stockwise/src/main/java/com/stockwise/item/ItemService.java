@@ -5,135 +5,125 @@ import com.stockwise.item.dto.ItemUpdateRequest;
 import com.stockwise.item.exception.DuplicateSkuException;
 import com.stockwise.item.exception.ItemNotFoundException;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
  * Service: ItemService
  *
  * Responsibility:
- * - Encapsulate business logic related to items.
- * - Provide higher-level operations for controllers.
- * - Enforce business rules such as unique SKU validation.
+ * - Handle business logic for inventory items.
+ * - Enforce validation and uniqueness rules.
+ * - Coordinate repository access for item operations.
  */
 @Service
-@Transactional
 public class ItemService {
 
     private final ItemRepository itemRepository;
 
-    /**
-     * Constructor-based dependency injection of ItemRepository.
-     */
     public ItemService(ItemRepository itemRepository) {
         this.itemRepository = itemRepository;
     }
 
     /**
      * Retrieve all items.
-     *
-     * @return List of all items.
      */
-    @Transactional(readOnly = true)
     public List<Item> getAllItems() {
         return itemRepository.findAll();
     }
 
     /**
-     * Retrieve a single item by ID.
-     *
-     * @param id Item primary key.
-     * @return Item or null if not found.
+     * Retrieve all active items.
      */
-    @Transactional(readOnly = true)
-    public Item getItemById(Long id) {
-        return itemRepository.findById(id).orElse(null);
+    public List<Item> getActiveItems() {
+        return itemRepository.findByActiveTrue();
     }
 
     /**
-     * Retrieve a single item by ID and require that it exists.
-     *
-     * @param id Item primary key.
-     * @return Existing item.
-     * @throws ItemNotFoundException if no item exists for the given ID.
+     * Retrieve all low-stock active items.
      */
-    @Transactional(readOnly = true)
+    public List<Item> getLowStockItems() {
+        return itemRepository.findLowStockItems();
+    }
+
+    /**
+     * Count low-stock active items.
+     */
+    public long getLowStockItemCount() {
+        return getLowStockItems().size();
+    }
+
+    /**
+     * Calculate total inventory value for active items.
+     */
+    public BigDecimal getTotalInventoryValue() {
+        return itemRepository.findByActiveTrue()
+                .stream()
+                .map(item -> item.getUnitCost().multiply(BigDecimal.valueOf(item.getQuantityOnHand())))
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+    }
+
+    /**
+     * Retrieve one required item by ID.
+     */
     public Item getRequiredItem(Long id) {
         return itemRepository.findById(id)
                 .orElseThrow(() -> new ItemNotFoundException(id));
     }
 
     /**
-     * Retrieve a single item by SKU.
-     *
-     * @param sku Unique SKU value.
-     * @return Existing item.
-     * @throws ItemNotFoundException if no item exists for the given SKU.
+     * Retrieve one required item by SKU.
      */
-    @Transactional(readOnly = true)
     public Item getItemBySku(String sku) {
         return itemRepository.findBySku(sku)
-                .orElseThrow(() -> new ItemNotFoundException(sku));
+                .orElseThrow(() -> new ItemNotFoundException("Item not found with SKU: " + sku));
     }
 
     /**
      * Create a new item.
-     *
-     * @param req DTO containing create request data.
-     * @return Saved item.
-     * @throws DuplicateSkuException if the SKU already exists.
      */
-    public Item createItem(ItemCreateRequest req) {
-        if (itemRepository.existsBySku(req.getSku())) {
-            throw new DuplicateSkuException(req.getSku());
+    public Item createItem(ItemCreateRequest request) {
+        if (itemRepository.existsBySku(request.getSku())) {
+            throw new DuplicateSkuException(request.getSku());
         }
 
-        Item item = new Item(
-                req.getName(),
-                req.getSku(),
-                req.getQuantityOnHand(),
-                req.getUnitCost()
-        );
-
-        item.setActive(req.getActive() == null || req.getActive());
+        Item item = new Item();
+        item.setName(request.getName());
+        item.setSku(request.getSku());
+        item.setQuantityOnHand(request.getQuantityOnHand());
+        item.setUnitCost(request.getUnitCost());
+        item.setReorderThreshold(request.getReorderThreshold() != null ? request.getReorderThreshold() : 5);
+        item.setActive(true);
 
         return itemRepository.save(item);
     }
 
     /**
      * Update an existing item.
-     *
-     * @param id  ID of the item to update.
-     * @param req DTO containing updated values.
-     * @return Updated item.
-     * @throws ItemNotFoundException if the item does not exist.
-     * @throws DuplicateSkuException if SKU is changed to one that already exists.
      */
-    public Item updateItem(Long id, ItemUpdateRequest req) {
-        Item existing = getRequiredItem(id);
+    public Item updateItem(Long id, ItemUpdateRequest request) {
+        Item item = getRequiredItem(id);
 
-        if (!existing.getSku().equals(req.getSku()) && itemRepository.existsBySku(req.getSku())) {
-            throw new DuplicateSkuException(req.getSku());
+        if (!item.getSku().equals(request.getSku()) && itemRepository.existsBySku(request.getSku())) {
+            throw new DuplicateSkuException(request.getSku());
         }
 
-        existing.setName(req.getName());
-        existing.setSku(req.getSku());
-        existing.setQuantityOnHand(req.getQuantityOnHand());
-        existing.setUnitCost(req.getUnitCost());
-        existing.setActive(req.getActive());
+        item.setName(request.getName());
+        item.setSku(request.getSku());
+        item.setQuantityOnHand(request.getQuantityOnHand());
+        item.setUnitCost(request.getUnitCost());
+        item.setReorderThreshold(request.getReorderThreshold());
+        item.setActive(Boolean.TRUE.equals(request.getActive()));
 
-        return itemRepository.save(existing);
+        return itemRepository.save(item);
     }
 
     /**
-     * Delete an item and require that it exists first.
-     *
-     * @param id ID of the item to delete.
-     * @throws ItemNotFoundException if the item does not exist.
+     * Delete an item by ID.
      */
     public void deleteRequiredItem(Long id) {
-        Item existing = getRequiredItem(id);
-        itemRepository.delete(existing);
+        Item item = getRequiredItem(id);
+        itemRepository.delete(item);
     }
 }

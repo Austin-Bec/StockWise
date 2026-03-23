@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Inventory Items</title>
+    <meta charset="UTF-8">
+</head>
+<body>
+
+<h1>Inventory Items</h1>
+
+<p>
+    <a th:href="@{/}">Home</a> |
+    <a th:href="@{/items/new}">Add New Item</a>
+</p>
+
+<table border="1">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>SKU</th>
+        <th>Quantity</th>
+        <th>Reorder Threshold</th>
+        <th>Unit Cost</th>
+        <th>Active</th>
+        <th>Low Stock</th>
+        <th>Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="item : ${items}"
+        th:style="${item.quantityOnHand <= item.reorderThreshold} ? 'background-color:#f8d7da;' : ''">
+        <td th:text="${item.id}"></td>
+        <td th:text="${item.name}"></td>
+        <td th:text="${item.sku}"></td>
+        <td th:text="${item.quantityOnHand}"></td>
+        <td th:text="${item.reorderThreshold}"></td>
+        <td th:text="${item.unitCost}"></td>
+        <td th:text="${item.active}"></td>
+        <td th:text="${item.quantityOnHand <= item.reorderThreshold ? 'YES' : 'NO'}"></td>
+        <td>
+            <a th:href="@{/items/{id}(id=${item.id})}">View</a>
+            <a th:href="@{/items/{id}/edit(id=${item.id})}">Edit</a>
+            <a th:href="@{/transactions/new/{id}(id=${item.id})}">Adjust Stock</a>
+            <a th:href="@{/transactions/history/{id}(id=${item.id})}">History</a>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+</body>
+</html>

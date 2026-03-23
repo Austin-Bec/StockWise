@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Inventory Transaction</title>
+    <meta charset="UTF-8">
+</head>
+<body>
+
+<h1>Inventory Transaction</h1>
+
+<p>
+    <a th:href="@{/items/{id}(id=${item.id})}">Back to Item</a> |
+    <a th:href="@{/items}">Back to Items</a>
+</p>
+
+<h3 th:text="'Item: ' + ${item.name}"></h3>
+<p th:text="'Current Quantity: ' + ${item.quantityOnHand}"></p>
+<p th:text="'Reorder Threshold: ' + ${item.reorderThreshold}"></p>
+
+<div th:if="${error}" style="color:red;">
+    <p th:text="${error}"></p>
+</div>
+
+<form th:action="@{/transactions}" th:object="${transactionForm}" method="post">
+    <input type="hidden" th:field="*{itemId}">
+
+    <div>
+        <label for="transactionType">Transaction Type:</label>
+        <select id="transactionType" th:field="*{transactionType}">
+            <option value="">-- Select --</option>
+            <option value="STOCK_IN">Stock In</option>
+            <option value="STOCK_OUT">Stock Out</option>
+            <option value="ADJUSTMENT">Adjustment</option>
+        </select>
+    </div>
+
+    <br>
+
+    <div>
+        <label for="quantityChanged">Quantity:</label>
+        <input id="quantityChanged" type="number" min="1" th:field="*{quantityChanged}">
+    </div>
+
+    <br>
+
+    <div>
+        <label for="note">Note:</label>
+        <input id="note" type="text" th:field="*{note}">
+    </div>
+
+    <br>
+
+    <button type="submit">Save Transaction</button>
+</form>
+
+</body>
+</html>
