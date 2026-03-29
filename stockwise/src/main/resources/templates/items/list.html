@@ -22,12 +22,15 @@
         <th>Quantity</th>
         <th>Reorder Threshold</th>
         <th>Unit Cost</th>
-        <th>Active</th>
-        <th>Low Stock</th>
+        <th>Status</th>
+        <th>Inventory Health</th>
         <th>Actions</th>
     </tr>
     </thead>
     <tbody>
+    <tr th:if="${#lists.isEmpty(items)}">
+        <td colspan="9">No inventory items found.</td>
+    </tr>
     <tr th:each="item : ${items}"
         th:style="${item.quantityOnHand <= item.reorderThreshold} ? 'background-color:#f8d7da;' : ''">
         <td th:text="${item.id}"></td>
@@ -36,12 +39,12 @@
         <td th:text="${item.quantityOnHand}"></td>
         <td th:text="${item.reorderThreshold}"></td>
         <td th:text="${item.unitCost}"></td>
-        <td th:text="${item.active}"></td>
-        <td th:text="${item.quantityOnHand <= item.reorderThreshold ? 'YES' : 'NO'}"></td>
+        <td th:text="${item.active ? 'Active' : 'Inactive'}"></td>
+        <td th:text="${item.quantityOnHand <= item.reorderThreshold ? 'LOW' : 'OK'}"></td>
         <td>
-            <a th:href="@{/items/{id}(id=${item.id})}">View</a>
-            <a th:href="@{/items/{id}/edit(id=${item.id})}">Edit</a>
-            <a th:href="@{/transactions/new/{id}(id=${item.id})}">Adjust Stock</a>
+            <a th:href="@{/items/{id}(id=${item.id})}">View</a> |
+            <a th:href="@{/items/{id}/edit(id=${item.id})}">Edit</a> |
+            <a th:href="@{/transactions/new/{id}(id=${item.id})}">Adjust Stock</a> |
             <a th:href="@{/transactions/history/{id}(id=${item.id})}">History</a>
         </td>
     </tr>

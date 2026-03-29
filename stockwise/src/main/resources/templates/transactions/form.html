@@ -9,20 +9,25 @@
 <h1>Inventory Transaction</h1>
 
 <p>
-    <a th:href="@{/items/{id}(id=${item.id})}">Back to Item</a> |
+    <a th:href="@{/transactions/history/{id}(id=${item.id})}">View Transaction History</a> |
     <a th:href="@{/items}">Back to Items</a>
 </p>
 
 <h3 th:text="'Item: ' + ${item.name}"></h3>
 <p th:text="'Current Quantity: ' + ${item.quantityOnHand}"></p>
 <p th:text="'Reorder Threshold: ' + ${item.reorderThreshold}"></p>
+<p th:text="'Status: ' + (${item.active} ? 'Active' : 'Inactive')"></p>
+
+<p th:if="${item.quantityOnHand <= item.reorderThreshold}" style="color:red;">
+    Low Inventory Alert
+</p>
 
 <div th:if="${error}" style="color:red;">
     <p th:text="${error}"></p>
 </div>
 
-<form th:action="@{/transactions}" th:object="${transactionForm}" method="post">
-    <input type="hidden" th:field="*{itemId}">
+<form th:action="@{/transactions/save}" th:object="${transactionRequest}" method="post">
+    <input type="hidden" th:field="*{itemId}"/>
 
     <div>
         <label for="transactionType">Transaction Type:</label>
@@ -38,14 +43,14 @@
 
     <div>
         <label for="quantityChanged">Quantity:</label>
-        <input id="quantityChanged" type="number" min="1" th:field="*{quantityChanged}">
+        <input id="quantityChanged" type="number" min="1" th:field="*{quantityChanged}"/>
     </div>
 
     <br>
 
     <div>
         <label for="note">Note:</label>
-        <input id="note" type="text" th:field="*{note}">
+        <input id="note" type="text" th:field="*{note}"/>
     </div>
 
     <br>

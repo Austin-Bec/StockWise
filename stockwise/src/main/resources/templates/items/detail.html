@@ -39,23 +39,24 @@
         <td th:text="${item.unitCost}"></td>
     </tr>
     <tr>
-        <th>Active</th>
-        <td th:text="${item.active}"></td>
+        <th>Item Status</th>
+        <td th:text="${item.active ? 'Active' : 'Inactive'}"></td>
     </tr>
     <tr>
-        <th>Status</th>
+        <th>Inventory Health</th>
         <td th:style="${item.quantityOnHand <= item.reorderThreshold} ? 'color:red;font-weight:bold;' : 'color:green;font-weight:bold;'"
-            th:text="${item.quantityOnHand <= item.reorderThreshold ? 'LOW STOCK' : 'OK'}">
+            th:text="${item.quantityOnHand <= item.reorderThreshold ? 'LOW STOCK' : 'IN STOCK'}">
         </td>
     </tr>
 </table>
 
 <br>
 
+<h3>Item Actions</h3>
 <p>
-    <a th:href="@{/items/{id}/edit(id=${item.id})}">Edit</a> |
+    <a th:href="@{/items/{id}/edit(id=${item.id})}">Edit Item</a> |
     <a th:href="@{/transactions/new/{id}(id=${item.id})}">Adjust Inventory</a> |
-    <a th:href="@{/transactions/history/{id}(id=${item.id})}">View History</a>
+    <a th:href="@{/transactions/history/{id}(id=${item.id})}">View Transaction History</a>
 </p>
 
 <form th:action="@{/items/{id}/delete(id=${item.id})}" method="post">

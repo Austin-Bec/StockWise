@@ -4,6 +4,13 @@ import com.stockwise.item.Item;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
+/**
+ * Entity: InventoryTransaction
+ * Responsibility:
+ * - Records an inventory movement for a specific item.
+ * - Stores the type of transaction, quantity changed, before/after stock levels,
+ *   optional notes, and timestamp for audit/history purposes.
+ */
 @Entity
 @Table(name = "inventory_transactions")
 public class InventoryTransaction {
@@ -12,28 +19,52 @@ public class InventoryTransaction {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    /**
+     * The inventory item associated with this transaction.
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "item_id", nullable = false)
     private Item item;
 
+    /**
+     * Transaction type, such as STOCK_IN, STOCK_OUT, or ADJUSTMENT.
+     */
     @Column(nullable = false, length = 30)
     private String transactionType;
 
+    /**
+     * The quantity entered for this transaction.
+     */
     @Column(nullable = false)
     private Integer quantityChanged;
 
+    /**
+     * Quantity on hand before the transaction was applied.
+     */
     @Column(nullable = false)
     private Integer quantityBefore;
 
+    /**
+     * Quantity on hand after the transaction was applied.
+     */
     @Column(nullable = false)
     private Integer quantityAfter;
 
+    /**
+     * Optional note explaining the reason for the transaction.
+     */
     @Column(length = 255)
     private String note;
 
+    /**
+     * Date and time the transaction was recorded.
+     */
     @Column(nullable = false)
     private LocalDateTime timestamp;
 
+    /**
+     * Default constructor required by JPA.
+     */
     public InventoryTransaction() {
         this.timestamp = LocalDateTime.now();
     }

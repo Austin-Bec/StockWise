@@ -7,8 +7,12 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+/**
+ * Handles page-based inventory transaction workflows such as
+ * showing the transaction form, saving transactions, and viewing transaction history.
+ */
 @Controller
-@RequestMapping("/api/transactions")
+@RequestMapping("/transactions")
 public class InventoryTransactionController {
 
     private final InventoryTransactionService transactionService;
@@ -20,6 +24,13 @@ public class InventoryTransactionController {
         this.itemRepository = itemRepository;
     }
 
+    /**
+     * Displays the transaction entry form for a specific item.
+     *
+     * @param itemId the item id
+     * @param model the MVC model
+     * @return transaction form view
+     */
     @GetMapping("/new/{itemId}")
     public String showTransactionForm(@PathVariable Long itemId, Model model) {
         Item item = itemRepository.findById(itemId)
@@ -28,11 +39,18 @@ public class InventoryTransactionController {
         InventoryTransactionRequest request = new InventoryTransactionRequest();
         request.setItemId(itemId);
 
-        model.addAttribute("templates/templates/item", item);
+        model.addAttribute("item", item);
         model.addAttribute("transactionRequest", request);
-        return "templates/transactions/form";
+        return "transactions/form";
     }
 
+    /**
+     * Processes a submitted inventory transaction form.
+     *
+     * @param request submitted transaction data
+     * @param model the MVC model
+     * @return redirect to transaction history on success, or returns form with error on failure
+     */
     @PostMapping("/save")
     public String saveTransaction(@ModelAttribute("transactionRequest") InventoryTransactionRequest request,
                                   Model model) {
@@ -43,20 +61,27 @@ public class InventoryTransactionController {
             Item item = itemRepository.findById(request.getItemId())
                     .orElseThrow(() -> new IllegalArgumentException("Invalid item id"));
 
-            model.addAttribute("templates/templates/item", item);
+            model.addAttribute("item", item);
             model.addAttribute("transactionRequest", request);
             model.addAttribute("error", ex.getMessage());
-            return "templates/transactions/form";
+            return "transactions/form";
         }
     }
 
+    /**
+     * Displays transaction history for a specific item.
+     *
+     * @param itemId the item id
+     * @param model the MVC model
+     * @return transaction history view
+     */
     @GetMapping("/history/{itemId}")
     public String showTransactionHistory(@PathVariable Long itemId, Model model) {
         Item item = itemRepository.findById(itemId)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid item id"));
 
-        model.addAttribute("templates/templates/item", item);
-        model.addAttribute("templates/transactions", transactionService.getTransactionsForItem(itemId));
-        return "templates/transactions/history";
+        model.addAttribute("item", item);
+        model.addAttribute("transactions", transactionService.getTransactionsForItem(itemId));
+        return "transactions/history";
     }
 }

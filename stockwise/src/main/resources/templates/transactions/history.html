@@ -9,14 +9,19 @@
 <h1>Transaction History</h1>
 
 <p>
-    <a th:href="@{/items/{id}(id=${item.id})}">Back to Item</a> |
-    <a th:href="@{/items}">Back to Items</a> |
-    <a th:href="@{/transactions/new/{id}(id=${item.id})}">Add Transaction</a>
+    <a th:href="@{/transactions/new/{id}(id=${item.id})}">Add Transaction</a> |
+    <a th:href="@{/items}">Back to Items</a>
 </p>
 
 <h3 th:text="'Item: ' + ${item.name}"></h3>
+<p th:text="'SKU: ' + ${item.sku}"></p>
 <p th:text="'Current Quantity: ' + ${item.quantityOnHand}"></p>
 <p th:text="'Reorder Threshold: ' + ${item.reorderThreshold}"></p>
+<p th:text="'Status: ' + (${item.active} ? 'Active' : 'Inactive')"></p>
+
+<p th:if="${item.quantityOnHand <= item.reorderThreshold}" style="color:red;">
+    Low Inventory Alert
+</p>
 
 <table border="1">
     <thead>
@@ -31,6 +36,9 @@
     </tr>
     </thead>
     <tbody>
+    <tr th:if="${#lists.isEmpty(transactions)}">
+        <td colspan="7">No transactions recorded for this item.</td>
+    </tr>
     <tr th:each="txn : ${transactions}">
         <td th:text="${txn.id}"></td>
         <td th:text="${txn.transactionType}"></td>
