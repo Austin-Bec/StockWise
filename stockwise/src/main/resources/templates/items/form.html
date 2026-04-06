@@ -12,6 +12,9 @@
     <a th:href="@{/items}">Back to Items</a> |
     <a th:href="@{/}">Home</a>
 </p>
+<form th:action="@{/logout}" method="post" style="display:inline;">
+    <button type="submit">Logout</button>
+</form>
 
 <div th:if="${error}" style="color:red;">
     <p th:text="${error}"></p>

@@ -1,6 +1,7 @@
 package com.stockwise;
 
 import com.stockwise.item.ItemService;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,7 +16,8 @@ public class HomeController {
     }
 
     @GetMapping("/")
-    public String home(Model model) {
+    public String home(Model model, Authentication authentication) {
+        model.addAttribute("username", authentication.getName());
         model.addAttribute("totalItems", itemService.getAllItems().size());
         model.addAttribute("activeItems", itemService.getActiveItems().size());
         model.addAttribute("lowStockItems", itemService.getLowStockItems());

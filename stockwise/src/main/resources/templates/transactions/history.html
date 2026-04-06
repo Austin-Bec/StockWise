@@ -12,7 +12,9 @@
     <a th:href="@{/transactions/new/{id}(id=${item.id})}">Add Transaction</a> |
     <a th:href="@{/items}">Back to Items</a>
 </p>
-
+<form th:action="@{/logout}" method="post" style="display:inline;">
+    <button type="submit">Logout</button>
+</form>
 <h3 th:text="'Item: ' + ${item.name}"></h3>
 <p th:text="'SKU: ' + ${item.sku}"></p>
 <p th:text="'Current Quantity: ' + ${item.quantityOnHand}"></p>

@@ -7,11 +7,16 @@
 <body>
 
 <h1>StockWise Dashboard</h1>
+<p th:text="'Logged in as: ' + ${username}"></p>
 
 <p>
     <a th:href="@{/items}">View Items</a> |
     <a th:href="@{/items/new}">Add New Item</a>
 </p>
+
+<form th:action="@{/logout}" method="post" style="display:inline;">
+    <button type="submit">Logout</button>
+</form>
 
 <hr>
 
@@ -49,8 +54,8 @@
         <td th:text="${item.reorderThreshold}"></td>
         <td th:text="${item.unitCost}"></td>
         <td>
-            <a th:href="@{/items/{id}(id=${item.id})}">View</a>
-            <a th:href="@{/transactions/new/{id}(id=${item.id})}">Adjust Stock</a>
+            <a th:href="@{/items/{id}(id=${item.id})}">View</a> |
+            <a th:href="@{/transactions/new/{id}(id=${item.id})}">Adjust Stock</a> |
             <a th:href="@{/transactions/history/{id}(id=${item.id})}">History</a>
         </td>
     </tr>

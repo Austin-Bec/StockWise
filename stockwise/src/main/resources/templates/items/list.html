@@ -12,6 +12,9 @@
     <a th:href="@{/}">Home</a> |
     <a th:href="@{/items/new}">Add New Item</a>
 </p>
+<form th:action="@{/logout}" method="post" style="display:inline;">
+    <button type="submit">Logout</button>
+</form>
 
 <table border="1">
     <thead>

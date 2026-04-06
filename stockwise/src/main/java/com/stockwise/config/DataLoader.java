@@ -2,7 +2,10 @@ package com.stockwise.config;
 
 import com.stockwise.item.Item;
 import com.stockwise.item.ItemRepository;
+import com.stockwise.user.User;
+import com.stockwise.user.UserRepository;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
@@ -10,21 +13,38 @@ import java.math.BigDecimal;
 /**
  * DataLoader
  *
- * I added this so the app has some data immediately after startup.
- * Since H2 is in-memory right now, it resets every time the app restarts.
+ * Seeds initial application data at startup.
  */
 @Component
 public class DataLoader implements CommandLineRunner {
 
     private final ItemRepository itemRepository;
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    public DataLoader(ItemRepository itemRepository) {
+    public DataLoader(ItemRepository itemRepository,
+                      UserRepository userRepository,
+                      PasswordEncoder passwordEncoder) {
         this.itemRepository = itemRepository;
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
     public void run(String... args) {
-        // I only want to seed when the table is empty.
+        seedUsers();
+        seedItems();
+    }
+
+    private void seedUsers() {
+        if (userRepository.findByUsername("admin").isEmpty()) {
+            userRepository.save(
+                    new User("admin", passwordEncoder.encode("password123"), "ROLE_ADMIN")
+            );
+        }
+    }
+
+    private void seedItems() {
         if (itemRepository.count() > 0) {
             return;
         }
