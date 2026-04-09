@@ -4,7 +4,7 @@ WORKDIR /app
 
 COPY stockwise/ .
 
-RUN chmod +x mvnw && ./mvnw clean package -DskipTests
+RUN chmod +x mvnw && ./mvnw clean package -Dmaven.test.skip=true
 
 EXPOSE 8080
 
