@@ -2,10 +2,10 @@ FROM eclipse-temurin:21-jdk
 
 WORKDIR /app
 
-COPY stockwise/ .
+COPY . .
 
-RUN chmod +x mvnw && ./mvnw clean package -DskipTests
+RUN chmod +x stockwise/mvnw && cd stockwise && ./mvnw clean package -DskipTests
 
 EXPOSE 8080
 
-CMD ["sh", "-c", "java -Dserver.port=${PORT:-8080} -jar target/stockwise-0.0.1-SNAPSHOT.jar"]
+CMD ["sh", "-c", "cd stockwise && java -Dserver.port=${PORT:-8080} -jar target/stockwise-0.0.1-SNAPSHOT.jar"]
